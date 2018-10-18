@@ -1,4 +1,4 @@
-# Swift-Style-Guide
+# Swift Style Guide
 Coding Style Guide for Swift Language
 
 Before reviewing some specific cases please read [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/) for the Swift language.
@@ -31,9 +31,10 @@ Before reviewing some specific cases please read [Apple's API Design Guidelines]
 		- [4.7 Constants](#47-constants)
 		- [4.8 Properties](#48-properties)
 		- [4.9 Closures](#49-closures)
-		- [4.10 Arrays](#410-arrays)
-		- [4.11 Using guard](#411-using-guard)
-		- [4.12 Golden Path](#412-golden-path)
+        - [4.10 Ternary operator](#410-ternary-operator)
+		- [4.11 Arrays](#411-arrays)
+		- [4.12 Using guard](#412-using-guard)
+		- [4.13 Golden Path](#413-golden-path)
 	- [5. Memory Management](#5-memory-management)
 	- [6. Copyright Statement](#6-copyright-statement)
     
@@ -42,6 +43,7 @@ Before reviewing some specific cases please read [Apple's API Design Guidelines]
 For automating some coding standard validation use [SwiftLint](https://github.com/realm/SwiftLint) which checks following [rules](https://github.com/realm/SwiftLint/blob/master/Rules.md). 
 At the beginning, configure linter to use most strict mode as possible and then gradually team can relax it by disabling some rules.
 *(following guide does not contain some rules which are controlled by SwiftLint)*
+
 
 ## 1. Code Formatting
 
@@ -174,20 +176,22 @@ Prefer using local constants or other mitigation techniques to avoid multi-line 
 
 ```swift
 // PREFERRED
-let firstCondition = (((A == F) || (A > M)) && A < Const.Threshold) 
-let secondCondition = (((B == D) || (B > K)) && B > Const.Threshold) 
-let thirdCondition = (C != E) || (C < M) 
+let firstCondition = (A == F || A > M) && A < Const.Threshold 
+let secondCondition = (B == D || B > K) && B > Const.Threshold 
+let thirdCondition = C != E || C < M 
 if firstCondition && secondCondition && thirdCondition {
     // do something
 }
 
 // NOT PREFERRED
-if x == (((A == F) || (A > M)) && A < Const.Threshold) 
-    && (((B == D) || (B > K)) && B > Const.Threshold) 
-    && (C != E) || (C < M)  {
+if ((A == F || A > M) && A < Const.Threshold) 
+    && ((B == D || B > K) && B > Const.Threshold) 
+    && (C != E || C < M )  {
     // do something
 }
 ```
+
+
 
 ## 2. Code Organization
 
@@ -448,7 +452,7 @@ func encode(_ clientJSON: [Any: String]]) -> (client: Client, error: Error?) {
 }
 
 let operation = encode(data)
-guard error = operation.error {
+guard let error = operation.error {
     ...
 }
 let client = operation.client
@@ -722,17 +726,33 @@ doSomething(1.0, success: { (parameter1) in
 })
 ```
 
-### 4.10 Arrays
+### 4.10 Ternary operator
+The ternary operator `condition ? if-yes : if-no` should only be used when it increases clarity of the code. Awoid using nested ternary operations.
 
-**4.10.1** - In general, avoid accessing an array directly with subscripts. When possible, use accessors such as `.first` or `.last`, which are optional and won’t crash. Prefer using a `for item in items` syntax when possible as opposed to something like `for i in 0 ..< items.count`. If you need to access an array subscript directly, make sure to do proper bounds checking. You can use `for (index, value) in items.enumerated()` to get both the index and the value.
+```swift
+// PREFERRED
 
-**4.10.2** - Never use the `+=` or `+` operator to append/concatenate to arrays. Instead, use `.append()` or `.append(contentsOf:)` as these are far more performant (at least with respect to compilation) in Swift's current state. If you are declaring an array that is based on other arrays and want to keep it immutable, instead of `let myNewArray = arr1 + arr2`, use `let myNewArray = [arr1, arr2].joined()`.
+let value = 5
+result = value > 0 ? x : y
+
+let isHorizontal = true
+result = isHorizontal ? x : y
+
+// NOT PREFERRED
+result = a > b ? c > d ? x > y ? b : d : y : x
+```
+
+### 4.11 Arrays
+
+**4.11.1** - In general, avoid accessing an array directly with subscripts. When possible, use accessors such as `.first` or `.last`, which are optional and won’t crash. Prefer using a `for item in items` syntax when possible as opposed to something like `for i in 0 ..< items.count`. If you need to access an array subscript directly, make sure to do proper bounds checking. You can use `for (index, value) in items.enumerated()` to get both the index and the value.
+
+**4.11.2** - Never use the `+=` or `+` operator to append/concatenate to arrays. Instead, use `.append()` or `.append(contentsOf:)` as these are far more performant (at least with respect to compilation) in Swift's current state. If you are declaring an array that is based on other arrays and want to keep it immutable, instead of `let myNewArray = arr1 + arr2`, use `let myNewArray = [arr1, arr2].joined()`.
 
 
 
-### 4.11 Using guard
+### 4.12 Using guard
 
-**4.11.1** - When unwrapping optionals, prefer `guard` statements as opposed to `if` statements to decrease the amount of nested indentation in your code.
+**4.12.1** - When unwrapping optionals, prefer `guard` statements as opposed to `if` statements to decrease the amount of nested indentation in your code.
 
 ```swift
 // PREFERRED
@@ -756,7 +776,7 @@ bookVacation(on: monkeyIsland!)
 bragAboutVacation(at: monkeyIsland!)
 ```
 
-**4.11.2** - When deciding between using an `if` statement or a `guard` statement when unwrapping optionals is *not* involved, the most important thing to keep in mind is the readability of the code. There are many possible cases here, such as depending on two different booleans, a complicated logical statement involving multiple comparisons, etc., so in general, use your best judgement to write code that is readable and consistent. If you are unsure whether `guard` or `if` is more readable or they seem equally readable, prefer using `guard`.
+**4.12.2** - When deciding between using an `if` statement or a `guard` statement when unwrapping optionals is *not* involved, the most important thing to keep in mind is the readability of the code. There are many possible cases here, such as depending on two different booleans, a complicated logical statement involving multiple comparisons, etc., so in general, use your best judgement to write code that is readable and consistent. If you are unsure whether `guard` or `if` is more readable or they seem equally readable, prefer using `guard`.
 
 ```swift
 // an `if` statement is readable here
@@ -775,7 +795,7 @@ guard !operationFailed else {
 }
 ```
 
-**4.11.3** - If choosing between two different states, it makes more sense to use an `if` statement as opposed to a `guard` statement.
+**4.12.3** - If choosing between two different states, it makes more sense to use an `if` statement as opposed to a `guard` statement.
 
 ```swift
 // PREFERRED
@@ -794,7 +814,7 @@ guard isFriendly else {
 print("Hello, nice to meet you!")
 ```
 
-**4.11.4** - Often, we can run into a situation in which we need to unwrap multiple optionals using `guard` statements. In general, combine unwraps into a single `guard` statement if handling the failure of each unwrap is identical (e.g. just a `return`, `break`, `continue`, `throw`, or some other `@noescape`).
+**4.12.4** - Often, we can run into a situation in which we need to unwrap multiple optionals using `guard` statements. In general, combine unwraps into a single `guard` statement if handling the failure of each unwrap is identical (e.g. just a `return`, `break`, `continue`, `throw`, or some other `@noescape`).
 
 ```swift
 // combined because we just return
@@ -818,7 +838,7 @@ guard let thingThree = thingThree else {
 }
 ```
 
-**4.11.5** - Don’t use one-liners for `guard` statements.
+**4.12.5** - Don’t use one-liners for `guard` statements.
 
 
 ```swift
@@ -831,7 +851,7 @@ guard let thingOne = thingOne else {
 guard let thingOne = thingOne else { return }
 ```
 
-### 4.12 Golden Path
+### 4.13 Golden Path
 
 When coding with conditionals, the left-hand margin of the code should be the "golden" or "happy" path. That is, don't nest if statements. Multiple return statements are OK. The guard statement is built for this.
 
