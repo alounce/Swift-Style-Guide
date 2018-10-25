@@ -17,9 +17,8 @@ Before reviewing some specific cases please read [Apple's API Design Guidelines]
 		- [1.7 Conditions](#17-conditions)  
 	- [2. Code Organization](#2-code-organization)
 		- [2.1 Extensions](#21-extensions)
-		- [2.2 Protocol Conformance](#22-protocol-conformance)
-		- [2.3 Unused Code](#23-unused-code) 
-		- [2.4 Imports](#24-imports)
+		- [2.2 Unused Code](#22-unused-code) 
+		- [2.3 Imports](#23-imports)
 	- [3. Naming](#3-naming)
 	- [4. Coding Style](#4-coding-style)
 		- [4.1 General](#41-General)
@@ -51,13 +50,14 @@ At the beginning, configure linter to use most strict mode as possible and then 
 Keep tab and spaces as Xcode defaults: `Tab width`: **4 spaces** and `Indent width`: **4 spaces**.
 
 ### 1.2 Length of lines
-Try to avoid long lines with a hard maximum of 160 characters per line (Xcode->Preferences->Text Editing->Page guide at column: 160 is helpful for this)
+Avoid long lines with a hard maximum of 160 characters per line
 
 ### 1.3 Braces
 For constructions like `if/else/switch/while` always open on the same line as the statement but close on a new line. [1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS)
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
+
 ```swift
-// PREFERRED
 class MyClass {
     func myMethod() {
         if flag {
@@ -69,8 +69,11 @@ class MyClass {
         }
     }
 }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+
+```swift
 class MyClass 
 {
     func myMethod() 
@@ -96,20 +99,14 @@ class MyClass
 Use Xcode's recommended indentation style. 
 Code should not change if _Editor->Structure->Re-Indent_ (^I) is pressed. 
 
-```swift
-// Xcode indentation for a function declaration that spans multiple lines
-func multiArgumentFunction(argumentOne: String,
-                           argumentTwo: String,
-                           argumentThree: String) -> String {
-    // Xcode indents to here for this kind of statement
-    print("Doing somehting useful here!")
-}
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 
+```swift
 // Xcode indentation for a multi-line `if` statement
 if firstLongLongCondition
     && secondLongLongCondition
     && thirdLongLongCondition {
-
+    
     // Xcode indents to here for this kind of statement
     print("Doing somehting useful here!")
 }
@@ -119,6 +116,7 @@ if firstLongLongCondition
 
 Keep short function declarations on one line including the opening brace, however for functions with long signatures, put arguments extra indent on subsequent lines:
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 // Short function declaration
 func reticulateSplines(spline: [Double]) -> Bool {
@@ -145,6 +143,7 @@ func reticulateSplines(spline: [Double],
 
 When calling a function that has many parameters, put each argument on a separate line with a single extra indentation.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 let result = multiArgumentFunction(
     argumentOne: "James",
@@ -154,6 +153,7 @@ let result = multiArgumentFunction(
 
 When dealing with an implicit array or dictionary large enough to warrant splitting it into multiple lines, treat the `[` and `]` as if they were braces in a method, `if` statement, etc. Closures in a method should be treated similarly.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 functionWithSomeArguments(
     stringArgument: "hello I am a string",
@@ -174,16 +174,18 @@ functionWithSomeArguments(
 
 Prefer using local constants or other mitigation techniques to avoid multi-line predicates where possible.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 let firstCondition = (A == F || A > M) && A < Const.Threshold 
 let secondCondition = (B == D || B > K) && B > Const.Threshold 
 let thirdCondition = C != E || C < M 
 if firstCondition && secondCondition && thirdCondition {
     // do something
 }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 if ((A == F || A > M) && A < Const.Threshold) 
     && ((B == D || B > K) && B > Const.Threshold) 
     && (C != E || C < M )  {
@@ -201,46 +203,26 @@ Use extensions to organize your code into logical blocks of functionality. Each 
 
 `// MARK: - comment to keep things well-organized.`
 
-### 2.2 Protocol Conformance 
+See example in [4.6 Protocols](#46-protocols)
 
-In particular, when adding protocol conformance to a model, prefer adding a separate extension for the protocol methods. This keeps the related methods grouped together with the protocol and can simplify instructions to add a protocol to a class with its associated methods.
-```swift
-// PREFERRED
-class MyViewController: UIViewController {
-  // class stuff here
-}
-
-// MARK: - UITableViewDataSource
-extension MyViewController: UITableViewDataSource {
-  // table view data source methods
-}
-
-// MARK: - UIScrollViewDelegate
-extension MyViewController: UIScrollViewDelegate {
-  // scroll view delegate methods
-}
-
-// NOT PREFERRED
-class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
-  // all methods
-}
-```
-
-### 2.3 Unused Code 
+### 2.2 Unused Code 
 
 Unused (dead) code, including Xcode template code and placeholder comments should be removed. An exception is when this code can be used in future - however then provide proper reason explaination in the comments.
 
-### 2.4 Imports 
+### 2.3 Imports 
 
 Keep imports minimal. For example, don't import UIKit when importing Foundation will suffice.
 
 ## 3. Naming
 
 **3.1** - Do not use class prefixing in Swift
+
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 class Account { ... }
-// NOT PREFERRED
+```
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 class SGAccount { ... }
 ```
 
@@ -248,50 +230,41 @@ class SGAccount { ... }
 
 **3.3** - Use `camelCase` for function, method, property, constant, variable, argument names, enum cases, etc.
 
-**3.4** - When dealing with an acronym or other name that is usually written in all caps, actually use all caps in any names that use this in code. The exception is if this word is at the start of a name that needs to start with lowercase - in this case, use all lowercase for the acronym.
+**3.4** - All constants that are instance-independent should be `static`. All such `static` constants should be placed in a marked section of their `class`, `struct`, or `enum`. For classes with many constants, you should group constants that have similar or the same prefixes, suffixes and/or use cases.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// "HTML" is at the start of a constant name, so we use lowercase "html"
-let htmlBodyContent: String = "<p>Hello, World!</p>"
-// Prefer using ID to Id
-let profileID: Int = 1
-// Prefer URLFinder to UrlFinder
-class URLFinder {
-    /* ... */
-}
-```
-
-**3.5** - All constants that are instance-independent should be `static`. All such `static` constants should be placed in a marked section of their `class`, `struct`, or `enum`. For classes with many constants, you should group constants that have similar or the same prefixes, suffixes and/or use cases.
-
-```swift
-// PREFERRED    
 class ClientViewController {
     // MARK: - Constants
     static let buttonPadding: CGFloat = 20.0
     static let shared = ClientViewController()
 }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 class ClientViewController {
     // Don't use `k`-prefix
     static let kButtonPadding: CGFloat = 20.0
 }
 ```
 
-**3.6** - Names should be descriptive and unambiguous.
+**3.5** - Names should be descriptive and unambiguous.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 class RoundAnimatingButton: UIButton { /* ... */ }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 class CustomButton: UIButton { /* ... */ }
 ```
 
-**3.7** - Do not abbreviate, use shortened names, or single letter names.
+**3.6** - Do not abbreviate, use shortened names, or single letter names.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 class RoundAnimatingButton: UIButton {
     let animationDuration: NSTimeInterval
 
@@ -300,8 +273,10 @@ class RoundAnimatingButton: UIButton {
     }
 
 }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 class RoundAnimating: UIButton {
     let aniDur: NSTimeInterval
 
@@ -311,18 +286,16 @@ class RoundAnimating: UIButton {
 }
 ```
 
-**3.8** - Include type information in constant or variable names when it is not obvious otherwise.
+**3.7** - Include type information in constant or variable names when it is not obvious otherwise.
 
 But try to keep things simple!
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
-
 // though not preferred, for some cases its ok to have ConnectionTableViewCell, 
 // however it could be enough just ConnectionCell
 class ConnectionTableViewCell: UITableViewCell {
     let personImageView: UIImageView
-
     let animationDuration: TimeInterval
 
     // It is OK and preferable to use `Controller` instead of `ViewController`
@@ -335,8 +308,10 @@ class ConnectionTableViewCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
 
 }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 class ConnectionTableViewCell: UITableViewCell {
     // this isn't a `UIImage`, so shouldn't be called image
     // use personImageView instead
@@ -371,10 +346,12 @@ class ConnectionTableViewCell: UITableViewCell {
 }
 ```
 
-**3.9** - When naming function arguments, make sure that the function can be read easily to understand the purpose of each argument.
+**3.8** - When naming function arguments, make sure that the function can be read easily to understand the purpose of each argument.
 
-**3.10** - As per [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/), a `protocol` should be named as nouns if they describe what something is doing (e.g. `Collection`) and using the suffixes `able`, `ible`, or `ing` if it describes a capability (e.g. `Equatable`, `ProgressReporting`). If neither of those options makes sense for your use case, you can add a `Protocol` suffix to the protocol's name as well. Some example `protocol`s are below.
+**3.9** - As per [Apple's API Design Guidelines](https://swift.org/documentation/api-design-guidelines/), a `protocol` should be named as nouns if they describe what something is doing (e.g. `Collection`) and using the suffixes `able`, `ible`, or `ing` if it describes a capability (e.g. `Equatable`, `ProgressReporting`). If neither of those options makes sense for your use case, you can add a `Protocol` suffix to the protocol's name as well. Some example `protocol`s are below.
 
+
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 // here, the name is a noun that describes what the protocol does
 protocol TableViewSectionProvider {
@@ -405,22 +382,23 @@ protocol InputTextViewProtocol {
 
 **4.1.1** -  Prefer the composition of `map`, `filter`, `reduce`, etc. over iterating when transforming from one collection to another. Make sure to avoid using closures that have side effects when using these methods.
 
+
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
-let stringOfInts = [1, 2, 3].flatMap { String($0) }
+let stringOfInts = [1, 2, 3].compactMap { String($0) }
 // ["1", "2", "3"]
 
-// NOT PREFERRED
+let evenNumbers = [4, 8, 15, 16, 23, 42].filter { $0 % 2 == 0 }
+// [4, 8, 16, 42]
+```
+
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 var stringOfInts: [String] = []
 for integer in [1, 2, 3] {
     stringOfInts.append(String(integer))
 }
 
-// PREFERRED
-let evenNumbers = [4, 8, 15, 16, 23, 42].filter { $0 % 2 == 0 }
-// [4, 8, 16, 42]
-
-// NOT PREFERRED
 var evenNumbers: [Int] = []
 for integer in [4, 8, 15, 16, 23, 42] {
     if integer % 2 == 0 {
@@ -429,22 +407,28 @@ for integer in [4, 8, 15, 16, 23, 42] {
 }
 ```
 
+
 **4.1.2** -  Prefer not declaring types for constants or variables if they can be inferred anyway.
+
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 let selector = #selector(viewDidLoad)
 view.backgroundColor = .red
 let toView = context.view(forKey: .to)
 let view = UIView(frame: .zero)
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 let selector = #selector(ViewController.viewDidLoad)
 view.backgroundColor = UIColor.red
 let toView = context.view(forKey: UITransitionContextViewKey.to)
 let view = UIView(frame: CGRect.zero)
 ```
+
 **4.1.3** - If a function returns multiple values, prefer returning a tuple to using `inout` arguments (it’s best to use labeled tuples for clarity on what you’re returning if it is not otherwise obvious). If you use a certain tuple more than once, consider using a `typealias`. If you’re returning 3 or more items in a tuple, consider using a `struct` or `class` instead.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 func encode(_ clientJSON: [Any: String]]) -> (client: Client, error: Error?) {
     ...
@@ -461,28 +445,19 @@ let client = operation.client
 
 **4.1.4** - Avoid writing out an `enum` type where possible - use shorthand.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 imageView.setImageWithURL(url, type: .person)
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 imageView.setImageWithURL(url, type: AsyncImageView.Type.person)
 ```
 
-**4.1.5** - Don’t use shorthand for class methods since it is generally more difficult to infer the context from class methods as opposed to `enum`s.
+**4.1.5** - When using a statement such as `else`, `catch`, etc. that follows a block, put this keyword on the same line as the block. Again, we are following the [1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS) here. Example `if`/`else` and `do`/`catch` code is below.
 
-```swift
-// PREFERRED
-imageView.backgroundColor = UIColor.white
-
-// NOT PREFERRED
-imageView.backgroundColor = .white
-```
-
-**4.1.6** - Prefer not writing `self.` unless it is required (for example in closures).
-
-**4.1.7** - When using a statement such as `else`, `catch`, etc. that follows a block, put this keyword on the same line as the block. Again, we are following the [1TBS style](https://en.m.wikipedia.org/wiki/Indentation_style#1TBS) here. Example `if`/`else` and `do`/`catch` code is below.
-
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 if someBoolean {
     // do something
@@ -497,35 +472,29 @@ do {
 }
 ```
 
-**4.1.8** - Prefer `static` to `class` when declaring a function or property that is associated with a class as opposed to an instance of that class. Only use `class` if you specifically need the functionality of overriding that function or property in a subclass, though consider using a `protocol` to achieve this instead.
+**4.1.6** - Prefer `static` to `class` when declaring a function or property that is associated with a class as opposed to an instance of that class. Only use `class` if you specifically need the functionality of overriding that function or property in a subclass, though consider using a `protocol` to achieve this instead.
 
-**4.1.9** - If you have a function that takes no arguments, has no side effects, and returns some object or value, prefer using a computed property instead.
+**4.1.7** - If you have a function that takes no arguments, has no side effects, and returns some object or value, prefer using a computed property instead.
 
 ### 4.2 Access Modifiers
 
 **4.2.1** - Write the access modifier keyword first if it is needed.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
-private static let myPrivateNumber: Int
-
-// NOT PREFERRED
-static private let myPrivateNumber: Int
+private static let myPrivateNumber: Int = 999
 ```
 
-**4.2.2** - If a property needs to be accessed by unit tests, you will have to make it `internal` to use `@testable import ModuleName`. If a property *should* be private, but you declare it to be `internal` for the purposes of unit testing, make sure you add an appropriate bit of documentation commenting that explains this. You can make use of the `- warning:` markup syntax for clarity as shown below.
-
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
 ```swift
-/**
- This property defines the pirate's name.
- - warning: Not `private` for `@testable`.
- */
-let pirateName = "LeChuck"
+static private let myPrivateNumber: Int = 999
 ```
 
-**4.2.3** - Prefer `private` to `fileprivate` where possible.
+**4.2.2** - Prefer `private` to `fileprivate` where possible.
 
-**4.2.4** - When choosing between `public` and `open`, prefer `open` if you intend for something to be subclassable outside of a given module and `public` otherwise. Note that anything `internal` and above can be subclassed in tests by using `@testable import`, so this shouldn't be a reason to use `open`. In general, lean towards being a bit more liberal with using `open` when it comes to libraries, but a bit more conservative when it comes to modules in a codebase such as an app where it is easy to change things in multiple modules simultaneously.
+**4.2.3** - When choosing between `public` and `open`, prefer `open` if you intend for something to be subclassable outside of a given module and `public` otherwise. Note that anything `internal` and above can be subclassed in tests by using `@testable import`, so this shouldn't be a reason to use `open`. In general, lean towards being a bit more liberal with using `open` when it comes to libraries, but a bit more conservative when it comes to modules in a codebase such as an app where it is easy to change things in multiple modules simultaneously.
+
+`public` and `open` we mostly could need for genie-shared module
 
 ### 4.3 Custom Operators
 
@@ -543,6 +512,7 @@ You can override existing operators to support new types (especially `==`). Howe
 
 **4.4.3** - When defining a case that has an associated value, make sure that this value is appropriately labeled as opposed to just types (e.g. `case hunger(hungerLevel: Int)` instead of `case hunger(Int)`).
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 enum Problem {
     case attitude
@@ -566,6 +536,7 @@ func handleProblem(problem: Problem) {
 
 **4.4.5** - If you have a default case that shouldn't be reached, preferably throw an error (or handle it some other similar way such as asserting).
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 func handleDigit(_ digit: Int) throws {
     switch digit {
@@ -579,57 +550,95 @@ func handleDigit(_ digit: Int) throws {
 
 ### 4.5 Optionals
 
-**4.5.1** - Try to avoid using `as!` or `try!`. Use them only if you have a reason, and with proper comment above this line
+**4.5.1** - Try to avoid using `as!` or `try!`. 
 
-**4.5.2** - If you don't plan on actually using the value stored in an optional, but need to determine whether or not this value is `nil`, explicitly check this value against `nil` as opposed to using `if let` syntax.
-
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERERED
-if someOptional != nil {
-    // do something
-}
-
-// NOT PREFERRED
-if let _ = someOptional {
-    // do something
+guard let controller = storyboard.instantiateViewController(withIdentifier: "ViewController") as? ViewController else {
+    fatalError("Unable to instantinate ViewController")
 }
 ```
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
+// it also brings `force_cast` SwiftLint error
+let controller = sb.instantiateViewController(withIdentifier: "ViewController") as! ViewController
+```
 
-**4.5.3** - Prefer using `weak` to using `unowned`. You can think of `unowned` as somewhat of an equivalent of a `weak` property that is implicitly unwrapped (though `unowned` has slight performance improvements on account of completely ignoring reference counting). Since we don't ever want to have implicit unwraps, we similarly don't want `unowned` properties.
+Use them only if you have a reason, and with proper comment above this line
+
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
+```swift
+data = opportunity.availableContractTerms
+        .filter { $0 is NSNumber }
+        .map { String(describing: $0 as! NSNumber) } // swiftlint:disable:this force_cast
+```
 
 
-**4.5.4** -  When unwrapping optionals, use the same name *(shadow the original name)* for the unwrapped constant or variable where appropriate.
+**4.5.2** - Prefer using `weak` to using `unowned`. You can think of `unowned` as somewhat of an equivalent of a `weak` property that is implicitly unwrapped (though `unowned` has slight performance improvements on account of completely ignoring reference counting). Since we don't ever want to have implicit unwraps, we similarly don't want `unowned` properties.
 
+
+**4.5.3** -  When unwrapping optionals, use the same name *(shadow the original name)* for the unwrapped constant or variable where appropriate.
+
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 guard let error = error else {
+    displayError(error)
     return
 }
 ```
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
+guard let e = error else {
+    displayError(e)
+    return
+}
+```
+
+
 ### 4.6 Protocols
 
-When implementing protocols, there are two ways of organizing your code:
+In particular, when adding protocol conformance to a model, prefer adding a separate extension for the protocol methods. This keeps the related methods grouped together with the protocol and can simplify instructions to add a protocol to a class with its associated methods.
 
-1. Using `// MARK:` comments to separate your protocol implementation from the rest of your code
-2. Using an extension outside your `class`/`struct` implementation code, but in the same source file
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
+```swift
+class MyViewController: UIViewController {
+  // class stuff here
+}
 
-Keep in mind that when using an extension, however, the methods in the extension can't be overridden by a subclass, which can make testing difficult. If this is a common use case, it might be better to stick with method #1 for consistency. Otherwise, method #2 allows for cleaner separation of concerns.
+// MARK: - UITableViewDataSource
+extension MyViewController: UITableViewDataSource {
+  // table view data source methods
+}
 
-Even when using method #2, add `// MARK:` statements anyway for easier readability in Xcode's method/property/class/etc. list UI.
+// MARK: - UIScrollViewDelegate
+extension MyViewController: UIScrollViewDelegate {
+  // scroll view delegate methods
+}
+```
+
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
+class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
+  // all methods
+}
+```
 
 ### 4.7 Constants
 
 You can define constants on a type rather than on an instance of that type using type properties. To declare a type property as a constant simply use static let. Type properties declared in this way are generally preferred over global constants because they are easier to distinguish from instance properties. Example:
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 enum Math {
   static let e = 2.718281828459045235360287
   static let root2 = 1.41421356237309504880168872
 }
 
 let hypotenuse = side * Math.root2
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 let e = 2.718281828459045235360287  // pollutes global namespace
 let root2 = 1.41421356237309504880168872
 
@@ -642,19 +651,20 @@ let hypotenuse = side * root2 // what is root2?
 **4.8.1** - You can declare a singleton property as follows:
 
 ```swift
-class PirateManager {
-    static let shared = PirateManager()
+class FeedbacksManager {
+    static let shared = FeedbacksManager()
 
     /* ... */
 }
 ```
+<span style="color:red">⚠️ &nbsp;However do not forget about tradeoffs that using singleton brings. Use it carefully</span>
 
 ### 4.9 Closures
 
 **4.9.1** - Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Give the closure parameters descriptive names.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 UIView.animate(withDuration: 1.0) {
   self.myView.alpha = 0
 }
@@ -664,8 +674,10 @@ UIView.animate(withDuration: 1.0, animations: {
 }, completion: { finished in
   self.myView.removeFromSuperview()
 })
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 UIView.animate(withDuration: 1.0, animations: {
   self.myView.alpha = 0
 })
@@ -679,6 +691,7 @@ UIView.animate(withDuration: 1.0, animations: {
 
 **4.9.2** - If the types of the parameters are obvious, it is OK to omit the type name, but being explicit is also OK. Sometimes readability is enhanced by adding clarifying detail and sometimes by taking repetitive parts away - use your best judgment and be consistent.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 // omitting the type
 doSomethingWithClosure() { response in
@@ -691,13 +704,14 @@ doSomethingWithClosure() { response: NSURLResponse in
 }
 
 // using shorthand in a map statement
-[1, 2, 3].flatMap { String($0) }
+[1, 2, 3].compactMap { String($0) }
 ```
 
 **4.9.3** - If specifying a closure as a type, you don’t need to wrap it in parentheses unless it is required (e.g. if the type is optional or the closure is within another closure). Always wrap the arguments in the closure in a set of parentheses - use `()` to indicate no arguments and use `Void` to indicate that nothing is returned.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-let completionBlock: (Bool) -> Void = { (success) in
+let completionBlock: (Bool) -> Void = { success in
     print("Success? \(success)")
 }
 
@@ -705,40 +719,28 @@ let completionBlock: () -> Void = {
     print("Completed!")
 }
 
+// parentheses required due to nullability
 let completionBlock: (() -> Void)? = nil
 ```
 
 **4.9.4** - Keep parameter names on same line as the opening brace for closures when possible without too much horizontal overflow (i.e. ensure lines are less than 160 characters).
 
-**4.9.5** - Use trailing closure syntax unless the meaning of the closure is not obvious without the parameter name (an example of this could be if a method has parameters for success and failure closures).
-
-```swift
-// trailing closure
-doSomething(1.0) { (parameter1) in
-    print("Parameter 1 is \(parameter1)")
-}
-
-// no trailing closure
-doSomething(1.0, success: { (parameter1) in
-    print("Success with \(parameter1)")
-}, failure: { (parameter1) in
-    print("Failure with \(parameter1)")
-})
-```
 
 ### 4.10 Ternary operator
 The ternary operator `condition ? if-yes : if-no` should only be used when it increases clarity of the code. Awoid using nested ternary operations.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 
 let value = 5
 result = value > 0 ? x : y
 
 let isHorizontal = true
 result = isHorizontal ? x : y
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 result = a > b ? c > d ? x > y ? b : d : y : x
 ```
 
@@ -754,21 +756,23 @@ result = a > b ? c > d ? x > y ? b : d : y : x
 
 **4.12.1** - When unwrapping optionals, prefer `guard` statements as opposed to `if` statements to decrease the amount of nested indentation in your code.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
-guard let monkeyIsland = monkeyIsland else {
-    return
-}
+guard let monkeyIsland = monkeyIsland else { return }
 bookVacation(on: monkeyIsland)
 bragAboutVacation(at: monkeyIsland)
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 if let monkeyIsland = monkeyIsland {
     bookVacation(on: monkeyIsland)
     bragAboutVacation(at: monkeyIsland)
 }
+```
 
-// EVEN LESS PREFERRED
+<span style="color:red">🚫 &nbsp;**EVEN LESS PREFERRED** </span>
+```swift
 if monkeyIsland == nil {
     return
 }
@@ -776,8 +780,16 @@ bookVacation(on: monkeyIsland!)
 bragAboutVacation(at: monkeyIsland!)
 ```
 
+**4.12.2** - When `else` part of the `guard` statements contains only one operator, place it at the same line as `guard` statement.
+
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
+```swift
+guard let specificKey = specificKey else { return }
+```
+
 **4.12.2** - When deciding between using an `if` statement or a `guard` statement when unwrapping optionals is *not* involved, the most important thing to keep in mind is the readability of the code. There are many possible cases here, such as depending on two different booleans, a complicated logical statement involving multiple comparisons, etc., so in general, use your best judgement to write code that is readable and consistent. If you are unsure whether `guard` or `if` is more readable or they seem equally readable, prefer using `guard`.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 // an `if` statement is readable here
 if operationFailed {
@@ -797,15 +809,17 @@ guard !operationFailed else {
 
 **4.12.3** - If choosing between two different states, it makes more sense to use an `if` statement as opposed to a `guard` statement.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 if isFriendly {
     print("Hello, nice to meet you!")
 } else {
     print("You have the manners of a beggar.")
 }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 guard isFriendly else {
     print("You have the manners of a beggar.")
     return
@@ -816,6 +830,7 @@ print("Hello, nice to meet you!")
 
 **4.12.4** - Often, we can run into a situation in which we need to unwrap multiple optionals using `guard` statements. In general, combine unwraps into a single `guard` statement if handling the failure of each unwrap is identical (e.g. just a `return`, `break`, `continue`, `throw`, or some other `@noescape`).
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
 // combined because we just return
 guard let thingOne = thingOne,
@@ -838,25 +853,12 @@ guard let thingThree = thingThree else {
 }
 ```
 
-**4.12.5** - Don’t use one-liners for `guard` statements.
-
-
-```swift
-// PREFERRED
-guard let thingOne = thingOne else {
-    return
-}
-
-// NOT PREFERRED
-guard let thingOne = thingOne else { return }
-```
-
 ### 4.13 Golden Path
 
 When coding with conditionals, the left-hand margin of the code should be the "golden" or "happy" path. That is, don't nest if statements. Multiple return statements are OK. The guard statement is built for this.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
   guard let context = context else {
@@ -869,8 +871,10 @@ func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies 
   // use context and input to compute the frequencies
   return frequencies
 }
+```
 
-// NOT PREFERRED
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
   if let context = context {
@@ -888,8 +892,8 @@ func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies 
 ```
 When multiple optionals are unwrapped either with guard or if let, minimize nesting by using the compound version when possible. Example:
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 guard let number1 = number1,
       let number2 = number2,
       let number3 = number3 else {
@@ -897,7 +901,10 @@ guard let number1 = number1,
 }
 // do something with numbers
 
-// NOT PREFERRED
+```
+
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 if let number1 = number1 {
   if let number2 = number2 {
     if let number3 = number3 {
@@ -920,8 +927,8 @@ if let number1 = number1 {
 
 **5.2** - Extend object lifetime using the `[weak self]` and `guard let ``self`` = self else { return }` idiom. [weak self] is preferred to [unowned self] where it is not immediately obvious that self outlives the closure. Explicitly extending lifetime is preferred to optional unwrapping. In Swift 4.2, you should drop the backticks in the guard statement.
 
+<span style="color:green">✅ &nbsp;**PREFERRED**</span>
 ```swift
-// PREFERRED
 resource.request().onComplete { [weak self] response in
   guard let `self` = self else {
     return
@@ -930,14 +937,16 @@ resource.request().onComplete { [weak self] response in
   self.updateUI(model)
 }
 
-// NOT PREFERRED
+```
+
+<span style="color:red">🚫 &nbsp;**NOT PREFERRED** </span>
+```swift
 // might crash if self is released before response returns
 resource.request().onComplete { [unowned self] response in
   let model = self.updateModel(response)
   self.updateUI(model)
 }
 
-// NOT PREFERRED
 // deallocate could happen between updating the model and updating UI
 resource.request().onComplete { [weak self] response in
   let model = self?.updateModel(response)
